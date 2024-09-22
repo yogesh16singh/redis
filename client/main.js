@@ -10,6 +10,9 @@ const Redis = require("ioredis");
 // We are going to cover how to specify connection options soon.
 const redis = new Redis();
 
+redis.echo("heo").then((result) => {
+    console.log(result);
+})
 // redis.set("mykey", "value"); // Returns a promise which resolves to "OK" when the command succeeds.
 
 // // ioredis supports the node.js callback style
@@ -22,9 +25,13 @@ const redis = new Redis();
 // });
 
 // // Or ioredis returns a promise if the last argument isn't a function
-redis.get("mykey").then((result) => {
-  console.log(result); // Prints "value"
-});
+// redis.get("mykey").then((result) => {
+//   console.log(result); // Prints "value"
+// });
+
+// redis.get("mykey").then((result) => {
+//     console.log(result); // Prints "value"
+//   });
 
 // redis.zadd("sortedSet", 1, "one", 2, "dos", 4, "quatro", 3, "three");
 // redis.zrange("sortedSet", 0, 2, "WITHSCORES").then((elements) => {
