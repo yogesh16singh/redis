@@ -20,9 +20,6 @@ const server = net.createServer((connection) => {
   connection.on("end", () => {
     console.log("Client disconnected");
   });
-  connection.on("error", (err) => {
-    console.error(err);
-  });
   connection.on("timeout", () => {
     console.log("Connection timed out");
   });
