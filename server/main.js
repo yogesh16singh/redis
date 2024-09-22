@@ -22,15 +22,23 @@ const server = net.createServer((connection) => {
           connection.write('+PONG\r\n')
           break
       case 'set':
-          console.log("set")
-          STORAGE[msg[4]] = msg[6]
+          STORAGE[msg[4]] = msg[6];
+          if(msg[8]=='EX')
+          {
+            setTimeout(() => {
+              delete STORAGE[msg[4]];
+            },msg[10])
+          }
           connection.write('+OK\r\n')
           break
       case 'get':
-          console.log("get")
-          connection.write(`$${STORAGE[msg[4]].length}\r\n${STORAGE[msg[4]]}\r\n` || '$-1\r\n')
+         if (STORAGE[msg[4]])
+          connection.write(
+            `$${STORAGE[msg[4]].length}\r\n${STORAGE[msg[4]]}\r\n`,
+          );
+        else connection.write("$-1\r\n");
+        
           break
-      
   }
   });
 
