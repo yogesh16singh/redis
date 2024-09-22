@@ -10,11 +10,15 @@ const Redis = require("ioredis");
 // We are going to cover how to specify connection options soon.
 const redis = new Redis();
 
-redis.echo("heo").then((result) => {
+// redis.echo("heo").then((result) => {
+//     console.log(result);
+// })
+redis.set("mykey", "value").then((result) =>{
     console.log(result);
-})
-// redis.set("mykey", "value"); // Returns a promise which resolves to "OK" when the command succeeds.
-
+    redis.get("mykey").then((result) => {
+        console.log(result);
+    })
+});
 // // ioredis supports the node.js callback style
 // redis.get("mykey", (err, result) => {
 //   if (err) {
@@ -51,4 +55,4 @@ setTimeout(() => {
       console.log('client is shutting down');
       process.exit(0);  // Exit once the server has closed
    
-  },  5000); // Adjust the time as needed
+  },  10000); // Adjust the time as needed

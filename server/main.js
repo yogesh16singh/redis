@@ -1,22 +1,39 @@
 const net = require("net");
+const PORT = 6379;
+const STORAGE = {};
 
 const server = net.createServer((connection) => {
   // Handle connection
+  console.log('client connected');
+
   connection.on("data", (data) => {
-    const commands = Buffer.from(data).toString().split("\r\n");
-    console.log("Received commands:", commands);
-    for (const command of commands) {
-      if (command == "ping") {
-        connection.write("+PONG\r\n");
-      }
-      if (command == "echo") {
-        const str=commands[4];
-        const l= str.length;
-        connection.write("$"+l+"\r\n"+str+"\r\n");
-        
-      }
-    }
+    console.log("Received: " + data.toString().split("\r\n"));
+
+    const msg = data.toString().split("\r\n");
+
+    const command = msg[2];
+    const arg = msg[4];
+
+    switch (command) {
+      case 'echo':
+          connection.write(`$${arg.length}\r\n${arg}\r\n`)
+          break
+      case 'ping':
+          connection.write('+PONG\r\n')
+          break
+      case 'set':
+          console.log("set")
+          STORAGE[msg[4]] = msg[6]
+          connection.write('+OK\r\n')
+          break
+      case 'get':
+          console.log("get")
+          connection.write(`$${STORAGE[msg[4]].length}\r\n${STORAGE[msg[4]]}\r\n` || '$-1\r\n')
+          break
+      
+  }
   });
+
   connection.on("end", () => {
     console.log("Client disconnected");
   });
@@ -30,6 +47,6 @@ const server = net.createServer((connection) => {
  
 });
 
-server.listen(6379, "127.0.0.1",() => {
+server.listen(PORT, "127.0.0.1",() => {
   console.log('Server listening on port ' + server.address().port);
 });
