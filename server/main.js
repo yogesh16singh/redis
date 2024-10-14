@@ -1,6 +1,26 @@
 const net = require("net");
 const PORT = 6379;
 const STORAGE = {};
+const CONFIG= new Map();
+
+const arguments= process.argv.slice(2);
+const [fileDir , fileName] = [arguments[1] ?? null , arguments[3] ?? null]
+console.log("arguments",arguments)
+
+if(fileDir && fileName)
+{
+  CONFIG.set("fileDir",fileDir);
+  CONFIG.set("dbfileName",fileName);
+}
+
+function formatConfigMessage(key = '', value = '') {
+	return `*2\r\n$${key.length}\r\n${key}\r\n$${value.length}\r\n${value}\r\n`;
+}
+
+function formatMessage(text = null) {
+	if (text) return `+${text}\r\n`;
+	return `$-1\r\n`;
+}
 
 const server = net.createServer((connection) => {
   // Handle connection
@@ -8,7 +28,6 @@ const server = net.createServer((connection) => {
 
   connection.on("data", (data) => {
     console.log("Received: " + data.toString().split("\r\n"));
-
     const msg = data.toString().split("\r\n");
 
     const command = msg[2];
@@ -37,7 +56,8 @@ const server = net.createServer((connection) => {
             `$${STORAGE[msg[4]].length}\r\n${STORAGE[msg[4]]}\r\n`,
           );
         else connection.write("$-1\r\n");
-        
+      case 'config':
+       connection.write(formatConfigMessage(msg[6],CONFIG.get(msg[6])))
           break
   }
   });
@@ -51,6 +71,9 @@ const server = net.createServer((connection) => {
   connection.on("close", () => {
     console.log("Connection closed");
   });
+  connection.on("error", (err) => {
+    console.log("Connection error: " + err.message);
+  })
   connection.write("+PONG\r\n");
  
 });

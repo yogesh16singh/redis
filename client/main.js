@@ -14,7 +14,7 @@ const redis = new Redis();
 //     console.log(result);
 // })
 
-redis.set("mykey", "value", "EX", 1000).then((result) =>{
+redis.set("mykey", "valu", "EX", 1000).then((result) =>{
     console.log(result);
     redis.get("mykey").then((result) => {
         console.log(result);
@@ -26,6 +26,7 @@ setTimeout(() => {
         console.log(result);
     })
 },2000)
+ 
 
 
 // // ioredis supports the node.js callback style
@@ -59,9 +60,9 @@ setTimeout(() => {
 // redis.set("mykey", "hello", "EX", 10);
 
 
-setTimeout(() => {
-    redis.quit();
-      console.log('client is shutting down');
-      process.exit(0);  // Exit once the server has closed
+// setTimeout(() => {
+//     redis.quit();
+//       console.log('client is shutting down');
+//       process.exit(0);  // Exit once the server has closed
    
-  },  20000); // Adjust the time as needed
+//   },  10000); // Adjust the time as needed
